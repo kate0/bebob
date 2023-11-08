@@ -30,14 +30,12 @@ template: |
 
     $CHANGES
 autolabeler:
-    - label: 'chore'
+    - label: 'internal'
       branch:
-          - '/chore\/.+/'
+          - '/internal\/.+/'
     - label: 'bug'
       branch:
           - '/bug\/.+/'
-          - '/bugfix\/.+/'
-          - '/hotfix\/.+/'
     - label: 'feature'
       branch:
           - '/feature\/.+/'
