@@ -1,5 +1,6 @@
-name-template: 'v$RESOLVED_VERSION 🌈'
+name-template: 'v$RESOLVED_VERSION'
 tag-template: 'v$RESOLVED_VERSION'
+category-template: '[int]'*
 categories:
     - title: 'Features'
       labels:
@@ -9,7 +10,9 @@ categories:
           - 'bug'
     - title: 'Internal'
       labels:
-          - 'chore'
+          - 'internal'
+          - 'tech_debt'
+          - 'documentation'
 change-template: '- $TITLE (#$NUMBER by @$AUTHOR)'
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 version-resolver:

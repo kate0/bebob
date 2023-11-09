@@ -22,5 +22,6 @@ The draft change note is constructed based on the available github labels:
 
 ## Flow
 
-- on push event work through the PR to check the labels with label_verifyer and add labels based on thema
+- on pr event work through the PR to check the labels with label_verifyer and add labels based on thema
+- on push drafter goes
 
