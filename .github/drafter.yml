@@ -1,6 +1,6 @@
 name-template: 'v$RESOLVED_VERSION'
 tag-template: 'v$RESOLVED_VERSION'
-category-template: '[int]'*
+category-template: '[int]'
 categories:
     - title: 'Features'
       labels:
