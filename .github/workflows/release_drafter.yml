@@ -47,7 +47,7 @@ jobs:
     steps:
       # Drafts  next Release notes as Pull Requests are merged into "main"
       - name: Checkout `release`
-        uses: actions/chechout@v2
+        uses: actions/checkout@v2
 
       - name: Draft release
         uses: release-drafter/release-drafter@v5
