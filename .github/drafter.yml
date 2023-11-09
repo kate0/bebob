@@ -32,13 +32,3 @@ template: |
     ## What's changed
 
     $CHANGES
-autolabeler:
-    - label: 'internal'
-      branch:
-          - '/internal\/.+/'
-    - label: 'bug'
-      branch:
-          - '/bug\/.+/'
-    - label: 'feature'
-      branch:
-          - '/feature\/.+/'
