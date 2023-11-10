@@ -13,6 +13,9 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+    permissions:
+        contents: write
+        pull-requests: write
 
         steps:
             - name: Checkout repository
@@ -26,38 +29,52 @@ jobs:
             - name: Install dependencies
               run: npm install -g release-drafter-github-app
 
+            - name: Create a release draft for a milestone
+              id: create-release-milestone
+              uses: ecampidoglio/auto-release-milestone@v1
+              with:
+                repo-token: ${{ secrets.GITHUB_TOKEN }}
+
             - name: Generate releases
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: |
-                  IFS=',' read -ra COMPONENTS <<< "${{ github.event.inputs.components }}"
+                uses: release-drafter/release-drafter@v5
+                with:
+                    config-name: drafter.yml
+                    disable-autolabeler: false
+                env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-                  for COMPONENT in "${COMPONENTS[@]}"
-                  do
-                    MILESTONES=$(curl -s "https://api.github.com/repos/${{ github.repository }}/milestones?state=open&title=${COMPONENT}" | jq -r '.[].title')
+#           - name: Generate releases
+#             env:
+#                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#             run: |
+#                  IFS=',' read -ra COMPONENTS <<< "${{ github.event.inputs.components }}"
+#
+#                  for COMPONENT in "${COMPONENTS[@]}"
+#                  do
+#                    MILESTONES=$(curl -s "https://api.github.com/repos/${{ github.repository }}/milestones?state=open&title=${COMPONENT}" | jq -r '.[].title')
 
-                    for MILESTONE in $MILESTONES
-                    do
-                      RELEASE_NOTES=""
+#                    for MILESTONE in $MILESTONES
+#                    do
+#                      RELEASE_NOTES=""
 
-                      FIX_CHANGES=$(curl -s "https://api.github.com/repos/${{ github.repository }}/issues?state=closed&milestone=${MILESTONE}&labels=bug" | jq -r '.[].title')
-                      NEW_CHANGES=$(curl -s "https://api.github.com/repos/${{ github.repository }}/issues?state=closed&milestone=${MILESTONE}&labels=feature" | jq -r '.[].title')
-                      INTERNAL_CHANGES=$(curl -s "https://api.github.com/repos/${{ github.repository }}/issues?state=closed&milestone=${MILESTONE}&labels!=bug,labels!=feature" | jq -r '.[].title')
+#                      FIX_CHANGES=$(curl -s "https://api.github.com/repos/${{ github.repository }}/issues?state=closed&milestone=${MILESTONE}&labels=bug" | jq -r '.[].title')
+#                      NEW_CHANGES=$(curl -s "https://api.github.com/repos/${{ github.repository }}/issues?state=closed&milestone=${MILESTONE}&labels=feature" | jq -r '.[].title')
+#                      INTERNAL_CHANGES=$(curl -s "https://api.github.com/repos/${{ github.repository }}/issues?state=closed&milestone=${MILESTONE}&labels!=bug,labels!=feature" | jq -r '.[].title')
 
-                      if [ ! -z "$FIX_CHANGES" ]; then
-                        RELEASE_NOTES+="## FIX\n"
-                        RELEASE_NOTES+="$FIX_CHANGES\n\n"
-                      fi
+#                      if [ ! -z "$FIX_CHANGES" ]; then
+#                        RELEASE_NOTES+="## FIX\n"
+#                       RELEASE_NOTES+="$FIX_CHANGES\n\n"
+#                      fi
 
-                      if [ ! -z "$NEW_CHANGES" ]; then
-                        RELEASE_NOTES+="## NEW\n"
-                        RELEASE_NOTES+="$NEW_CHANGES\n\n"
-                      fi
+#                      if [ ! -z "$NEW_CHANGES" ]; then
+#                        RELEASE_NOTES+="## NEW\n"
+#                        RELEASE_NOTES+="$NEW_CHANGES\n\n"
+#                      fi
 
-                      if [ ! -z "$INTERNAL_CHANGES" ]; then
-                        RELEASE_NOTES+="## INTERNAL\n"
-                        RELEASE_NOTES+="$INTERNAL_CHANGES\n\n"
-                      fi
+#                      if [ ! -z "$INTERNAL_CHANGES" ]; then
+#                        RELEASE_NOTES+="## INTERNAL\n"
+#                        RELEASE_NOTES+="$INTERNAL_CHANGES\n\n"
+#                      fi
 
-                      release-drafter-github-app --config-file .github/drafter.yml --release-name "Release $COMPONENT $MILESTONE" --release-notes "$RELEASE_NOTES"
-                    done
+#                      release-drafter-github-app --config-file .github/drafter.yml --release-name "Release $COMPONENT $MILESTONE" --release-notes "$RELEASE_NOTES"
+#                    done
