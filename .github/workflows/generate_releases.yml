@@ -30,7 +30,6 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
-                  # Get the list of milestones in the repository for each component.
                   IFS=',' read -ra COMPONENTS <<< "${{ github.event.inputs.components }}"
 
                   for COMPONENT in "${COMPONENTS[@]}"
@@ -39,15 +38,12 @@ jobs:
 
                     for MILESTONE in $MILESTONES
                     do
-                      # Initialize the release notes.
                       RELEASE_NOTES=""
 
-                      # Get the list of changes for each category.
                       FIX_CHANGES=$(curl -s "https://api.github.com/repos/${{ github.repository }}/issues?state=closed&milestone=${MILESTONE}&labels=bug" | jq -r '.[].title')
                       NEW_CHANGES=$(curl -s "https://api.github.com/repos/${{ github.repository }}/issues?state=closed&milestone=${MILESTONE}&labels=feature" | jq -r '.[].title')
                       INTERNAL_CHANGES=$(curl -s "https://api.github.com/repos/${{ github.repository }}/issues?state=closed&milestone=${MILESTONE}&labels!=bug,labels!=feature" | jq -r '.[].title')
 
-                      # Add the changes to the release notes.
                       if [ ! -z "$FIX_CHANGES" ]; then
                         RELEASE_NOTES+="## FIX\n"
                         RELEASE_NOTES+="$FIX_CHANGES\n\n"
@@ -63,6 +59,5 @@ jobs:
                         RELEASE_NOTES+="$INTERNAL_CHANGES\n\n"
                       fi
 
-                      # Use GitHub Release Drafter to generate the draft release notes for the milestone with the category-specific changes.
-                      github-release-drafter --config-file .github/release-drafter.yml --release-name "Release $COMPONENT $MILESTONE" --release-notes "$RELEASE_NOTES"
+                      release-drafter-github-app --config-file .github/drafter.yml --release-name "Release $COMPONENT $MILESTONE" --release-notes "$RELEASE_NOTES"
                     done
