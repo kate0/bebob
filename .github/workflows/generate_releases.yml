@@ -6,7 +6,7 @@ on:
             components:
                 description: 'Components to generate releases for (comma-separated)'
                 required: true
-                default: 'DV, Maven, Plugin' #All conponents
+                default: 'comp1, comp2, comp3' #All conponents
 
 jobs:
     build:
@@ -19,7 +19,7 @@ jobs:
             - name: Set up Node.js
               uses: actions/setup-node@v2
               with:
-                  node-version: '14'
+                  node-version: '16'
 
             - name: Install dependencies
               run: npm install -g github-release-drafter
